@@ -99,6 +99,7 @@ export default function App() {
       }} />
       <div style={{ fontSize: 14 }}>A carregar…</div>
     </div>
+    
   )
 
   // ── Render ────────────────────────────────────────────────────────────────
