@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import * as XLSX from 'xlsx'
 import { todayStr, thisMonth, fmtMoney, fmtDate } from '../utils'
 import { accent, green, red, muted, border, text, cardStyle, btnPrimary } from '../theme'
 import ConfirmDialog from '../components/ConfirmDialog'
@@ -7,32 +8,28 @@ const prevMonth = (m) => { const [y, mo] = m.split('-').map(Number); return mo =
 const nextMonth = (m) => { const [y, mo] = m.split('-').map(Number); return mo === 12 ? `${y+1}-01` : `${y}-${String(mo+1).padStart(2,'0')}` }
 const fmtMonth  = (m) => new Date(m + '-01T12:00:00').toLocaleDateString('pt-PT', { month: 'long', year: 'numeric' })
 
-const exportCSV = (rows, clients, filename) => {
-  const escape = v => `"${String(v ?? '').replace(/"/g, '""')}"`
-  const headers = ['Data', 'Cliente', 'Dono do Carro', 'Matrícula', 'Modelo', 'Serviço', 'Preço (€)', 'Pago a', 'Notas']
-  const lines = rows.map(w => {
+const exportXLSX = (rows, clients, filename) => {
+  const data = rows.map(w => {
     const client  = clients.find(c => c.id === w.clientId)
     const client2 = clients.find(c => c.id === w.client2Id)
     const car     = client?.cars?.find(c => c.id === w.carId) || client2?.cars?.find(c => c.id === w.carId)
-    return [
-      w.date,
-      client?.name || w.clientName || '',
-      client2?.name || w.client2Name || '',
-      car?.plate || '',
-      car?.model || '',
-      w.type || '',
-      String(Number(w.price) || 0).replace('.', ','),
-      w.paidTo || 'Dinis',
-      w.notes || '',
-    ].map(escape).join(';')
+    return {
+      'Data':         w.date || '',
+      'Cliente':      client?.name || w.clientName || '',
+      'Dono do Carro': client2?.name || w.client2Name || '',
+      'Matrícula':    car?.plate || '',
+      'Modelo':       car?.model || '',
+      'Serviço':      w.type || '',
+      'Preço (€)':    Number(w.price) || 0,
+      'Pago a':       w.paidTo || 'Dinis',
+      'Notas':        w.notes || '',
+    }
   })
-  const bom = '\uFEFF'
-  const csv = bom + [headers.map(escape).join(';'), ...lines].join('\n')
-  const a = document.createElement('a')
-  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }))
-  a.download = filename
-  a.click()
-  URL.revokeObjectURL(a.href)
+  const ws = XLSX.utils.json_to_sheet(data)
+  ws['!cols'] = [10, 20, 20, 12, 16, 20, 10, 10, 24].map(wch => ({ wch }))
+  const wb = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(wb, ws, 'Lavagens')
+  XLSX.writeFile(wb, filename)
 }
 
 export default function Lavagens({ washes, clients, setModal, onDeleteWash }) {
@@ -49,7 +46,7 @@ export default function Lavagens({ washes, clients, setModal, onDeleteWash }) {
 
   const handleExport = () => {
     const label = filter === 'month' ? fmtMonth(selectedMonth) : filter === 'today' ? 'hoje' : 'todas'
-    exportCSV(filtered, clients, `lavagens-${label}.csv`)
+    exportXLSX(filtered, clients, `lavagens-${label}.xlsx`)
   }
 
   return (
