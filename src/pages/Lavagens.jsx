@@ -7,6 +7,34 @@ const prevMonth = (m) => { const [y, mo] = m.split('-').map(Number); return mo =
 const nextMonth = (m) => { const [y, mo] = m.split('-').map(Number); return mo === 12 ? `${y+1}-01` : `${y}-${String(mo+1).padStart(2,'0')}` }
 const fmtMonth  = (m) => new Date(m + '-01T12:00:00').toLocaleDateString('pt-PT', { month: 'long', year: 'numeric' })
 
+const exportCSV = (rows, clients, filename) => {
+  const escape = v => `"${String(v ?? '').replace(/"/g, '""')}"`
+  const headers = ['Data', 'Cliente', 'Dono do Carro', 'Matrícula', 'Modelo', 'Serviço', 'Preço (€)', 'Pago a', 'Notas']
+  const lines = rows.map(w => {
+    const client  = clients.find(c => c.id === w.clientId)
+    const client2 = clients.find(c => c.id === w.client2Id)
+    const car     = client?.cars?.find(c => c.id === w.carId) || client2?.cars?.find(c => c.id === w.carId)
+    return [
+      w.date,
+      client?.name || w.clientName || '',
+      client2?.name || w.client2Name || '',
+      car?.plate || '',
+      car?.model || '',
+      w.type || '',
+      String(Number(w.price) || 0).replace('.', ','),
+      w.paidTo || 'Dinis',
+      w.notes || '',
+    ].map(escape).join(';')
+  })
+  const bom = '\uFEFF'
+  const csv = bom + [headers.map(escape).join(';'), ...lines].join('\n')
+  const a = document.createElement('a')
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }))
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(a.href)
+}
+
 export default function Lavagens({ washes, clients, setModal, onDeleteWash }) {
   const [filter,       setFilter]       = useState('month')
   const [selectedMonth, setSelectedMonth] = useState(thisMonth())
@@ -18,6 +46,11 @@ export default function Lavagens({ washes, clients, setModal, onDeleteWash }) {
     return true
   })
   const total = filtered.reduce((s, w) => s + (Number(w.price) || 0), 0)
+
+  const handleExport = () => {
+    const label = filter === 'month' ? fmtMonth(selectedMonth) : filter === 'today' ? 'hoje' : 'todas'
+    exportCSV(filtered, clients, `lavagens-${label}.csv`)
+  }
 
   return (
     <div>
@@ -68,9 +101,16 @@ export default function Lavagens({ washes, clients, setModal, onDeleteWash }) {
         </div>
       </div>
 
-      <button onClick={() => setModal({ type: 'addWash' })} style={{ ...btnPrimary, marginBottom: 14 }}>
-        + Nova Lavagem
-      </button>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
+        <button onClick={() => setModal({ type: 'addWash' })} style={{ ...btnPrimary, flex: 1 }}>
+          + Nova Lavagem
+        </button>
+        <button onClick={handleExport} disabled={filtered.length === 0} style={{
+          padding: '13px 14px', borderRadius: 10, border: `1px solid ${border}`,
+          background: 'transparent', color: filtered.length === 0 ? muted : green,
+          cursor: filtered.length === 0 ? 'default' : 'pointer', fontSize: 18, lineHeight: 1,
+        }} title="Exportar para Excel">⬇</button>
+      </div>
 
       {filtered.length === 0
         ? <div style={{ textAlign: 'center', color: muted, padding: '32px 0', fontSize: 14 }}>Sem lavagens</div>
