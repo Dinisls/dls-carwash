@@ -192,6 +192,7 @@ export default function Dashboard({ washes, clients, stock, purchases, setModal 
       {/* ── Últimas lavagens ── */}
       <div style={{ fontSize: 11, color: muted, textTransform: 'uppercase', letterSpacing: '0.07em', fontWeight: 600, marginBottom: 10 }}>
         Últimas Lavagens
+        
       </div>
       {washes.slice(0, 5).length === 0
         ? <div style={{ textAlign: 'center', color: muted, padding: '24px 0', fontSize: 14 }}>Sem lavagens registadas</div>
