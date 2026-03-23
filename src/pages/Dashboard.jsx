@@ -137,9 +137,8 @@ export default function Dashboard({ washes, clients, stock, purchases, setModal 
                     transition: 'height 0.4s ease',
                   }} />
                   <div style={{
-                    marginTop: 6, fontSize: 9, color: muted, textAlign: 'center',
-                    transform: 'rotate(-35deg)', transformOrigin: 'top center',
-                    whiteSpace: 'nowrap', width: 60, overflow: 'hidden', textOverflow: 'ellipsis',
+                    marginTop: 6, fontSize: 9, color: '#fff', textAlign: 'center',
+                    whiteSpace: 'nowrap', width: '100%', overflow: 'hidden', textOverflow: 'ellipsis',
                   }}>{s.type}</div>
                 </div>
               )
