@@ -104,53 +104,75 @@ export default function Dashboard({ washes, clients, stock, purchases, setModal 
         </div>
       </div>
 
-      {/* ── Receita por serviço ── */}
+      {/* ── Receita por serviço — gráfico de barras vertical ── */}
       {byService.length > 0 && (
         <div style={{ ...cardStyle, marginBottom: 16 }}>
-          <div style={{ fontSize: 11, color: muted, textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600, marginBottom: 14 }}>
+          <div style={{ fontSize: 11, color: muted, textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600, marginBottom: 16 }}>
             Receita por serviço
           </div>
-          {byService.map(s => (
-            <div key={s.type} style={{ marginBottom: 10 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 4 }}>
-                <span style={{ color: '#fff', fontWeight: 500 }}>{s.type}</span>
-                <span style={{ color: green, fontWeight: 700 }}>{fmtMoney(s.revenue)}</span>
+          <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8, height: 140, paddingBottom: 28, position: 'relative' }}>
+            {/* linhas de referência */}
+            {[0.25, 0.5, 0.75, 1].map(f => (
+              <div key={f} style={{
+                position: 'absolute', left: 0, right: 0,
+                bottom: 28 + (140 - 28) * f, borderTop: `1px dashed ${border}`,
+                pointerEvents: 'none',
+              }}>
+                <span style={{ position: 'absolute', right: 0, top: -9, fontSize: 9, color: muted }}>
+                  {fmtMoney(maxRevenue * f)}
+                </span>
               </div>
-              <div style={{ background: border, borderRadius: 4, height: 6, overflow: 'hidden' }}>
-                <div style={{
-                  height: '100%', borderRadius: 4,
-                  width: `${(s.revenue / maxRevenue) * 100}%`,
-                  background: `linear-gradient(90deg, ${green}, ${accent})`,
-                  transition: 'width 0.4s ease',
-                }} />
-              </div>
-            </div>
-          ))}
+            ))}
+            {byService.map((s, i) => {
+              const COLORS = [accent, '#22c55e', amber, purple, '#f43f5e', '#06b6d4', '#84cc16']
+              const col = COLORS[i % COLORS.length]
+              const pct = maxRevenue > 0 ? (s.revenue / maxRevenue) * 100 : 0
+              return (
+                <div key={s.type} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'flex-end' }}>
+                  <div style={{ fontSize: 10, color: col, fontWeight: 700, marginBottom: 4 }}>{fmtMoney(s.revenue)}</div>
+                  <div style={{
+                    width: '100%', borderRadius: '4px 4px 0 0',
+                    height: `${pct}%`, minHeight: 4,
+                    background: col, opacity: 0.85,
+                    transition: 'height 0.4s ease',
+                  }} />
+                  <div style={{
+                    marginTop: 6, fontSize: 9, color: muted, textAlign: 'center',
+                    transform: 'rotate(-35deg)', transformOrigin: 'top center',
+                    whiteSpace: 'nowrap', width: 60, overflow: 'hidden', textOverflow: 'ellipsis',
+                  }}>{s.type}</div>
+                </div>
+              )
+            })}
+          </div>
         </div>
       )}
 
-      {/* ── Número de lavagens por serviço ── */}
+      {/* ── Resumo por serviço — lista com badge + count + total ── */}
       {byService.length > 0 && (
         <div style={{ ...cardStyle, marginBottom: 16 }}>
           <div style={{ fontSize: 11, color: muted, textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600, marginBottom: 14 }}>
-            Lavagens por serviço
+            Resumo por serviço
           </div>
-          {[...byService].sort((a, b) => b.count - a.count).map(s => (
-            <div key={s.type} style={{ marginBottom: 10 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 4 }}>
-                <span style={{ color: '#fff', fontWeight: 500 }}>{s.type}</span>
-                <span style={{ color: amber, fontWeight: 700 }}>{s.count} {s.count === 1 ? 'lavagem' : 'lavagens'}</span>
+          {[...byService].sort((a, b) => b.count - a.count).map((s, i) => {
+            const COLORS = [accent, '#22c55e', amber, purple, '#f43f5e', '#06b6d4', '#84cc16']
+            const col = COLORS[i % COLORS.length]
+            return (
+              <div key={s.type} style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                background: '#0d1f36', borderRadius: 10, padding: '10px 14px', marginBottom: 8,
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span style={{
+                    background: col, color: '#fff', fontSize: 11, fontWeight: 700,
+                    padding: '3px 10px', borderRadius: 6, whiteSpace: 'nowrap',
+                  }}>{s.type}</span>
+                  <span style={{ fontSize: 13, color: muted }}>×{s.count}</span>
+                </div>
+                <span style={{ fontSize: 15, fontWeight: 700, color: '#fff' }}>{fmtMoney(s.revenue)}</span>
               </div>
-              <div style={{ background: border, borderRadius: 4, height: 6, overflow: 'hidden' }}>
-                <div style={{
-                  height: '100%', borderRadius: 4,
-                  width: `${(s.count / maxCount) * 100}%`,
-                  background: `linear-gradient(90deg, ${amber}, ${purple})`,
-                  transition: 'width 0.4s ease',
-                }} />
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
 
