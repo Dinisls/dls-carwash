@@ -208,7 +208,14 @@ export default function Dashboard({ washes, clients, stock, purchases, setModal 
                   <span>{fmtDate(w.date)}</span>
                 </div>
               </div>
-              <div style={{ fontSize: 17, fontWeight: 700, color: green }}>{fmtMoney(w.price)}</div>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: 17, fontWeight: 700, color: green }}>{fmtMoney(w.price)}</div>
+                <div style={{
+                  fontSize: 10, fontWeight: 700, marginTop: 4, padding: '2px 7px', borderRadius: 4, display: 'inline-block',
+                  background: w.paidTo === 'AFP' ? `${purple}25` : `${accent}25`,
+                  color: w.paidTo === 'AFP' ? purple : accent,
+                }}>{w.paidTo === 'AFP' ? '🏢 AFP' : '👤 Dinis'}</div>
+              </div>
             </div>
           )
         })
