@@ -67,7 +67,7 @@ export default function Dashboard({ washes, clients, stock, purchases, setModal 
         ].map(s => (
           <div key={s.label} style={{ background: card, border: `1px solid ${border}`, borderRadius: 12, padding: '14px 16px' }}>
             <div style={{ fontSize: 11, color: muted, textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>{s.label}</div>
-            <div style={{ fontSize: 22, fontWeight: 800, color: s.color, fontFamily: "'Syne',sans-serif", margin: '6px 0 2px' }}>{s.value}</div>
+            <div style={{ fontSize: 22, fontWeight: 800, color: s.color, fontFamily: "'DM Mono', monospace", margin: '6px 0 2px' }}>{s.value}</div>
             <div style={{ fontSize: 11, color: muted }}>{s.sub}</div>
           </div>
         ))}
@@ -81,11 +81,11 @@ export default function Dashboard({ washes, clients, stock, purchases, setModal 
         <div style={{ display: 'flex', gap: 12 }}>
           <div style={{ flex: 1, background: `${accent}15`, border: `1px solid ${accent}40`, borderRadius: 10, padding: '12px 14px' }}>
             <div style={{ fontSize: 11, color: muted, fontWeight: 600, marginBottom: 4 }}>👤 Dinis</div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: accent, fontFamily: "'Syne',sans-serif" }}>{fmtMoney(paidDinis)}</div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: accent, fontFamily: "'DM Mono', monospace" }}>{fmtMoney(paidDinis)}</div>
           </div>
           <div style={{ flex: 1, background: `${purple}15`, border: `1px solid ${purple}40`, borderRadius: 10, padding: '12px 14px' }}>
             <div style={{ fontSize: 11, color: muted, fontWeight: 600, marginBottom: 4 }}>🏢 AFP</div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: purple, fontFamily: "'Syne',sans-serif" }}>{fmtMoney(paidAFP)}</div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: purple, fontFamily: "'DM Mono', monospace" }}>{fmtMoney(paidAFP)}</div>
           </div>
         </div>
       </div>
@@ -94,7 +94,7 @@ export default function Dashboard({ washes, clients, stock, purchases, setModal 
       <div style={{ ...cardStyle, display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <div>
           <div style={labelStyle}>Margem este mês</div>
-          <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "'Syne',sans-serif", color: monthRevenue - monthExpenses >= 0 ? green : red }}>
+          <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "'DM Mono', monospace", color: monthRevenue - monthExpenses >= 0 ? green : red }}>
             {fmtMoney(monthRevenue - monthExpenses)}
           </div>
         </div>
@@ -208,7 +208,14 @@ export default function Dashboard({ washes, clients, stock, purchases, setModal 
                   <span>{fmtDate(w.date)}</span>
                 </div>
               </div>
-              <div style={{ fontSize: 17, fontWeight: 700, color: green }}>{fmtMoney(w.price)}</div>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: 17, fontWeight: 700, color: green }}>{fmtMoney(w.price)}</div>
+                <div style={{
+                  fontSize: 10, fontWeight: 700, marginTop: 4, padding: '2px 7px', borderRadius: 4, display: 'inline-block',
+                  background: w.paidTo === 'AFP' ? `${purple}25` : `${accent}25`,
+                  color: w.paidTo === 'AFP' ? purple : accent,
+                }}>{w.paidTo === 'AFP' ? '🏢 AFP' : '👤 Dinis'}</div>
+              </div>
             </div>
           )
         })

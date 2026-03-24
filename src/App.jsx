@@ -72,6 +72,7 @@ export default function App() {
   // Stock
   const addStock    = (s) => { setStock(prev => [s, ...prev]);                          upsertRecord('stock', s) }
   const updateStock = (s) => { setStock(prev => prev.map(x => x.id === s.id ? s : x)); upsertRecord('stock', s) }
+  const removeStock = (id) => { setStock(prev => prev.filter(x => x.id !== id));        deleteRecord('stock', id) }
 
   // Compras
   const addPurchase    = (p) => { setPurchases(prev => [p, ...prev]);                          upsertRecord('purchases', p) }
@@ -212,6 +213,7 @@ export default function App() {
               item={modal.data}
               onClose={() => setModal(null)}
               onSave={s => { updateStock(s); setModal(null) }}
+              onDelete={id => { removeStock(id); setModal(null) }}
             />
           )}
 
@@ -226,6 +228,7 @@ export default function App() {
             <PurchaseFormModal
               initial={modal.type === 'editPurchase' ? modal.data : undefined}
               onClose={() => setModal(null)}
+              onAddStock={addStock}
               onSave={p => {
                 modal.type === 'editPurchase' ? updatePurchase(p) : addPurchase(p)
                 setModal(null)

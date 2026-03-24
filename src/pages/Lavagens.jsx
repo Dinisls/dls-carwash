@@ -135,6 +135,11 @@ export default function Lavagens({ washes, clients, setModal, onDeleteWash }) {
                 <div style={{ textAlign: 'right', marginLeft: 12 }}>
                   <div style={{ fontSize: 18, fontWeight: 700, color: green }}>{fmtMoney(w.price)}</div>
                   <div style={{ fontSize: 11, color: muted, marginTop: 2 }}>{fmtDate(w.date)}</div>
+                  <div style={{
+                    fontSize: 10, fontWeight: 700, marginTop: 5, padding: '2px 7px', borderRadius: 4, display: 'inline-block',
+                    background: w.paidTo === 'AFP' ? '#a855f725' : '#3b82f625',
+                    color: w.paidTo === 'AFP' ? '#a855f7' : '#3b82f6',
+                  }}>{w.paidTo === 'AFP' ? '🏢 AFP' : '👤 Dinis'}</div>
                 </div>
               </div>
               <div style={{ display: 'flex', gap: 8, marginTop: 12, paddingTop: 12, borderTop: `1px solid ${border}` }}>

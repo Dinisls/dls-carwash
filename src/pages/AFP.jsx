@@ -21,7 +21,7 @@ export default function AFP({ washes, purchases, afpWithdrawals, setModal, onDel
           AFP deve
         </div>
         <div style={{
-          fontSize: 42, fontWeight: 800, fontFamily: "'Syne',sans-serif",
+          fontSize: 42, fontWeight: 800, fontFamily: "'DM Mono', monospace",
           color: saldo > 0 ? green : muted,
         }}>
           {fmtMoney(saldo)}

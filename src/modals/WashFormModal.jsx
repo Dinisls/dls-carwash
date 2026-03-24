@@ -339,7 +339,7 @@ export default function WashFormModal({ clients, onSave, onClose, onUpdateClient
                 <div style={{ fontSize: 13, fontWeight: 700, color: selected ? '#fff' : text, marginBottom: 4, lineHeight: 1.3 }}>
                   {s.name}
                 </div>
-                <div style={{ fontSize: 16, fontWeight: 800, fontFamily: "'Syne',sans-serif", color: selected ? accent : green }}>
+                <div style={{ fontSize: 16, fontWeight: 800, fontFamily: "'DM Mono', monospace", color: selected ? accent : green }}>
                   {s.price > 0 ? `${s.price.toFixed(2).replace('.', ',')}€` : '—'}
                 </div>
               </button>

@@ -51,13 +51,13 @@ export default function ViewClientModal({ client, washes, onClose, setModal }) {
         <div style={{ borderTop: `1px solid ${border}`, paddingTop: 12, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
           <div>
             <div style={labelStyle}>Total lavagens</div>
-            <div style={{ fontSize: 26, fontWeight: 800, color: accent, fontFamily: "'Syne',sans-serif" }}>
+            <div style={{ fontSize: 26, fontWeight: 800, color: accent, fontFamily: "'DM Mono', monospace" }}>
               {washes.length}
             </div>
           </div>
           <div>
             <div style={labelStyle}>Total gasto</div>
-            <div style={{ fontSize: 26, fontWeight: 800, color: green, fontFamily: "'Syne',sans-serif" }}>
+            <div style={{ fontSize: 26, fontWeight: 800, color: green, fontFamily: "'DM Mono', monospace" }}>
               {fmtMoney(total)}
             </div>
           </div>
